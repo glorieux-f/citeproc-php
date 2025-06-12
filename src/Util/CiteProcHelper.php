@@ -16,38 +16,48 @@ class CiteProcHelper
 {
 
     /**
+     * Get a user function to apply to a field
+     * 
+     * @param string $markupFunction name to search in $markupExtension extension
+     * @return callable a function 
+     */
+    public static function getAdditionMarkupFunction($markupFunction)
+    {
+        $node = null; // pointer on the desired function 
+        $markupExtension = CiteProc::getContext()->getMarkupExtension();
+        if (array_key_exists($markupFunction, $markupExtension)) {
+            $node = $markupExtension[$markupFunction];
+        }
+        elseif (array_key_exists($mode = CiteProc::getContext()->getMode(), $markupExtension)) {
+            if (array_key_exists($markupFunction, $markupExtension[$mode])) {
+                $node = $markupExtension[$mode][$markupFunction];
+            }
+        }
+        if (!$node) {
+            return null;
+        }
+        if (is_array($node) && array_key_exists('function', $node)) {
+            $node = $node['function'];
+        }
+        if (is_callable($node)) {
+            return $node;
+        }
+        return null;
+    }
+
+    /**
      * Applies additional functions for markup extension
      *
      * @param stdClass $dataItem the actual item
-     * @param string $valueToRender value the has to apply on
+     * @param string $markupFunction value the has to apply on
      * @param string $renderedText actual by citeproc rendered text
      * @return string
      */
-    public static function applyAdditionMarkupFunction($dataItem, $valueToRender, $renderedText)
+    public static function applyAdditionMarkupFunction($dataItem, $markupFunction, $renderedText)
     {
-        $markupExtension = CiteProc::getContext()->getMarkupExtension();
-        if (array_key_exists($valueToRender, $markupExtension)) {
-            if (is_array($markupExtension[$valueToRender]) && array_key_exists('function', $markupExtension[$valueToRender])) {
-                $function = $markupExtension[$valueToRender]['function'];
-            } else {
-                $function = $markupExtension[$valueToRender];
-            }
-            if (is_callable($function)) {
-                $renderedText = $function($dataItem, $renderedText);
-            }
-        } elseif (array_key_exists($mode = CiteProc::getContext()->getMode(), $markupExtension)) {
-            if (array_key_exists($valueToRender, $markupExtension[$mode])) {
-                if (is_array($markupExtension[$mode][$valueToRender]) && array_key_exists('function', $markupExtension[$mode][$valueToRender])) {
-                    $function = CiteProc::getContext()->getMarkupExtension()[$mode][$valueToRender]['function'];
-                } else {
-                    $function = CiteProc::getContext()->getMarkupExtension()[$mode][$valueToRender];
-                }
-                if (is_callable($function)) {
-                    $renderedText = $function($dataItem, $renderedText);
-                }
-            }
-        }
-        return $renderedText;
+        $function = CiteProcHelper::getAdditionMarkupFunction($markupFunction);
+        if (!$function) return $renderedText;
+        return $function($dataItem, $renderedText);
     }
 
     /**

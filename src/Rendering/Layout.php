@@ -99,7 +99,8 @@ class Layout implements Rendering
             }
             $ret .= implode($this->delimiter, CiteProc::getContext()->getResults()->toArray());
             $ret = StringHelper::clearApostrophes($ret);
-            return "<div class=\"csl-bib-body\">".$ret."\n</div>";
+            // let user choose his bibliographic wrapper
+            return $ret;
         } elseif (CiteProc::getContext()->isModeCitation()) {
             if ($citationItems->count() > 0) { //is there a filter for specific citations?
                 if ($this->isGroupedCitations($citationItems)) { //if citation items grouped?
@@ -175,10 +176,12 @@ class Layout implements Rendering
     private function wrapBibEntry($dataItem, $value)
     {
         $value = $this->addAffixes($value);
-        return "\n  ".
-            "<div class=\"csl-entry\">" .
-            $renderedItem = CiteProcHelper::applyAdditionMarkupFunction($dataItem, "csl-entry", $value) .
-            "</div>";
+        // if no user function at this level, provide a default wrapper
+        if (!CiteProcHelper::getAdditionMarkupFunction("csl-entry")) {
+            return "\n  <div class=\"csl-entry\">$value</div>";
+        }
+        // user has implemented his own wrapper, give him hand
+        return CiteProcHelper::applyAdditionMarkupFunction($dataItem, "csl-entry", $value);
     }
 
     /**
