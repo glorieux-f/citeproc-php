@@ -25,13 +25,14 @@ class CiteProcHelper
     {
         $node = null; // pointer on the desired function 
         $markupExtension = CiteProc::getContext()->getMarkupExtension();
-        if (array_key_exists($markupFunction, $markupExtension)) {
-            $node = $markupExtension[$markupFunction];
-        }
-        elseif (array_key_exists($mode = CiteProc::getContext()->getMode(), $markupExtension)) {
+        // mode specific function override genric
+        if (array_key_exists($mode = CiteProc::getContext()->getMode(), $markupExtension)) {
             if (array_key_exists($markupFunction, $markupExtension[$mode])) {
                 $node = $markupExtension[$mode][$markupFunction];
             }
+        }
+        if ($node == null && array_key_exists($markupFunction, $markupExtension)) {
+            $node = $markupExtension[$markupFunction];
         }
         if (!$node) {
             return null;
