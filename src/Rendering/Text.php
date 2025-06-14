@@ -44,6 +44,135 @@ class Text implements Rendering
         QuotesTrait;
 
     /**
+     * Render HTML-style markup in rich text fields, see CSL documentation:
+     * https://citeproc-js.readthedocs.io/en/latest/csl-json/markup.html#html-like-formatting-tags
+     * 
+     * Adaptation of Zotero CSL processor, with simplifications:
+     * https://github.com/zotero/zotero/blob/408f1274f4d98b72204393dd1392d71d6e7d507e/chrome/content/zotero/xpcom/utilities_internal.js#L2448C1-L2565C3
+     * - Inverse styles are not implemented (should be handled by CSS).
+     * - Only allowed tags and attributes are retained; others are escaped.
+     * 
+     * Example title:
+     * "Read <i><i>Laissez-Faire</i> Banking</i> in the <span style=\"font-variant:small-caps;\">xxi</span><sup>st</sup>"
+     * 
+     * Implemented as a custom Lambda Function.
+     * 
+     * @param string $data ? optional, possible $data context, not fully relevant
+     * @param string $text ! required, text to output
+     * @return string Safe HTML string with allowed tags and attributes
+     */
+    public static function renderRichText($data=null, $text)
+    {
+        static $ENT_FLAGS = ENT_SUBSTITUTE;
+        static $allowedTags = [
+            'b' => [],
+            'i' => [],
+            'span' => [
+                'style' => 'font-variant:small-caps;',
+                'class' => 'nocase',
+            ],
+            'sub' => [],
+            'sup' => [],
+        ];
+
+        // Remove ASCII control characters 0-31 and 127 (DEL)
+        $text = preg_replace('/[\x00-\x1F\x7F]/', '', $text);
+
+        // Fast path: no tags
+        if (strpos($text, "<") === false) {
+            return htmlspecialchars($text, $ENT_FLAGS, 'UTF-8');
+        }
+
+        // Tokenize tags and keep offsets
+        preg_match_all('/<(\/)?([^ >]+)([^>]*)?>/', $text, $tagMatches, PREG_OFFSET_CAPTURE);
+
+        $tagStack = [];
+        $output = '';
+        $lastPos = 0;
+        $count = count($tagMatches[0]);
+
+        for ($i = 0; $i < $count; $i++) {
+            $match = $tagMatches[0][$i][0];
+            $matchPos = $tagMatches[0][$i][1];
+
+            // Output text before this tag
+            if ($matchPos > $lastPos) {
+                $output .= htmlspecialchars(substr($text, $lastPos, $matchPos - $lastPos), $ENT_FLAGS, 'UTF-8');
+            }
+            $lastPos = $matchPos + strlen($match);
+
+            $tagName = strtolower($tagMatches[2][$i][0]);
+            $isClosing = $tagMatches[1][$i][0];
+
+            if (!array_key_exists($tagName, $allowedTags)) {
+                // Not an allowed tag, escape
+                $output .= htmlspecialchars($match, $ENT_FLAGS, 'UTF-8');
+                continue;
+            }
+
+            if ($isClosing) {
+                // Only close if it matches the last open tag
+                if (end($tagStack) === $tagName) {
+                    array_pop($tagStack);
+                    $output .= "</$tagName>";
+                } else {
+                    // Malformed nesting: escape
+                    $output .= htmlspecialchars($match, $ENT_FLAGS, 'UTF-8');
+                }
+                continue;
+            }
+
+            // Allowed opening tag. Check attributes if any required.
+            $allowedAttrs = $allowedTags[$tagName];
+            if (!$allowedAttrs) {
+                // No attributes needed or allowed
+                $output .= "<$tagName>";
+                $tagStack[] = $tagName;
+                continue;
+            }
+
+            // Parse attributes in tag
+            $attrString = isset($tagMatches[3][$i][0]) ? $tagMatches[3][$i][0] : '';
+            if ($attrString === '') {
+                $output .= htmlspecialchars($match, $ENT_FLAGS, 'UTF-8');
+                continue;
+            }
+            preg_match_all('/([a-zA-Z_:][a-zA-Z0-9_\-.:]*)\s*=\s*([\'"])(.*?)\2/', $attrString, $attrMatches, PREG_SET_ORDER);
+
+            $found = false;
+            foreach ($attrMatches as $m) {
+                $attrName = strtolower($m[1]);
+                if (!array_key_exists($attrName, $allowedAttrs)) continue;
+                $attrValue = trim($m[3]);
+                // For style attribute: normalize spacing, trailing semicolon
+                if ($attrName === 'style') {
+                    $attrValue = preg_replace('/\s+|;$/', '', $attrValue) . ';';
+                }
+                if ($attrValue !== $allowedAttrs[$attrName]) continue;
+                $found = true;
+                $output .= "<$tagName $attrName=\"{$allowedAttrs[$attrName]}\">";
+                $tagStack[] = $tagName;
+                break;
+            }
+            if (!$found) {
+                $output .= htmlspecialchars($match, $ENT_FLAGS, 'UTF-8');
+            }
+        }
+
+        // Output trailing text
+        if ($lastPos < strlen($text)) {
+            $output .= htmlspecialchars(substr($text, $lastPos), $ENT_FLAGS, 'UTF-8');
+        }
+
+        // Close any remaining open tags
+        while ($tagStack) {
+            $output .= '</' . array_pop($tagStack) . '>';
+        }
+
+        return $output;
+    }
+
+    /**
      * @var string
      */
     private $toRenderType;
