@@ -43,6 +43,8 @@ class Text implements Rendering
         ConsecutivePunctuationCharacterTrait,
         QuotesTrait;
 
+    private $renderFunction = [];
+
     /**
      * Render HTML-style markup in rich text fields, see CSL documentation:
      * https://citeproc-js.readthedocs.io/en/latest/csl-json/markup.html#html-like-formatting-tags
@@ -61,7 +63,7 @@ class Text implements Rendering
      * @param string $text ! required, text to output
      * @return string Safe HTML string with allowed tags and attributes
      */
-    public static function renderRichText($data=null, $text)
+    public static function renderTextRich($data=null, $text)
     {
         static $ENT_FLAGS = ENT_SUBSTITUTE;
         static $allowedTags = [
@@ -173,6 +175,20 @@ class Text implements Rendering
     }
 
     /**
+     * Default text rendering, escaped.
+     * 
+     * @param string $data ? optional, possible $data context, not fully relevant
+     * @param string $text ! required, text to output
+     * @return string Safe HTML string with allowed tags and attributes
+     */
+    public static function renderTextEscaped($data=null, $text)
+    {
+        return StringHelper::clearApostrophes (
+            htmlspecialchars($text, ENT_HTML5)
+        );        
+    }
+
+    /**
      * @var string
      */
     private $toRenderType;
@@ -194,21 +210,31 @@ class Text implements Rendering
      */
     public function __construct(SimpleXMLElement $node)
     {
+        static $attrsMap = array_flip(['value', 'variable', 'macro', 'term']);
         foreach ($node->attributes() as $attribute) {
             $name = $attribute->getName();
-            if (in_array($name, ['value', 'variable', 'macro', 'term'])) {
-                $this->toRenderType = $name;
-                $this->toRenderTypeValue = (string) $attribute;
-            }
+            if (!isset($attrsMap[$name])) continue;
+            $this->toRenderType = $name;
+            $this->toRenderTypeValue = (string) $attribute;
             if ($name === "form") {
                 $this->form = (string) $attribute;
             }
         }
+        // find the render function of text
+        // for performances, the possible functions are set at compile time of the CSL schema
+        $this->renderFunction['bibliography'] = CiteProcHelper::getAdditionMarkupFunction('text', 'bibliography');
+        $this->renderFunction['citation'] = CiteProcHelper::getAdditionMarkupFunction('text', 'citation');
+        $this->renderFunction['default'] = CiteProcHelper::getAdditionMarkupFunction('text');
+        if (!is_callable($this->renderFunction['default'])) $this->renderFunction['default'] = [__CLASS__,'renderTextEscaped'];
+        if (!is_callable($this->renderFunction['bibliography'])) $this->renderFunction['bibliography'] = $this->renderFunction['default'];
+        if (!is_callable($this->renderFunction['citation'])) $this->renderFunction['citation'] = $this->renderFunction['default'];
+
         $this->initFormattingAttributes($node);
         $this->initDisplayAttributes($node);
         $this->initTextCaseAttributes($node);
         $this->initAffixesAttributes($node);
         $this->initQuotesAttributes($node);
+
     }
 
     /**
@@ -363,12 +389,20 @@ class Text implements Rendering
                 $value = $data->{$this->toRenderTypeValue};
             }
         }
-        return $this->applyTextCase(
-            StringHelper::clearApostrophes(
-                htmlspecialchars($value, ENT_HTML5)
-            ),
-            $lang
-        );
+        // apply text case before function for escaping tags
+        $value = $this->applyTextCase($value, $lang);
+        if ($this->textCase) {
+            echo $this->textCase . " " . $value;
+        }
+        if (CiteProc::getContext()->isModeBibliography()) {
+            return $this->renderFunction['bibliography']($data, $value);
+        }
+        else if (CiteProc::getContext()->isModeCitation()) {
+            return $this->renderFunction['citation']($data, $value);
+        }
+        else {
+            return $this->renderFunction['default']($data, $value);
+        }
     }
 
     /**
