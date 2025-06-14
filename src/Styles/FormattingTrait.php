@@ -34,13 +34,13 @@ trait FormattingTrait
                 return "<i>$text</i>";
             },
             "light" => function($data, $text) {
-                return "<span style=\"font-weight:200\">$text</b>";
+                return "<span style=\"font-weight:200;\">$text</b>";
             },
             "oblique" => function($data, $text) {
-                return "<i>$text</i>";
+                return "<em>$text</em>";
             },
             "small-caps" => function($data, $text) {
-                return "<span style=\"font-variant: small-caps\">$text</span>";
+                return "<span style=\"font-variant:small-caps;\">$text</span>";
             },
             "sub" => function($data, $text) {
                 return "<sub>$text</sub>";
@@ -122,13 +122,11 @@ trait FormattingTrait
         // loop on attributes to find formating information
         foreach ($node->attributes() as $attribute) {
             $name = (string) $attribute->getName();
+            if (!isset(self::$formattingAttributes[$name])) continue;
             $value = (string) $attribute;
-            if (!array_key_exists($name, self::$formattingAttributes)) continue;
             $function = CiteProcHelper::getAdditionMarkupFunction($value);
-            echo "fun: $value " . is_callable($function) . "\n";
             // if no user defined function, use default html
-            if ($function == null) $function = self::$formatter[$value] ?? null;
-
+            if ($function == null) $function = self::$formatters[$value] ?? null;
             if ($function == null && $name == 'class') {
                 $function = function($data, $text) use($value) {
                     return "<span class=\"$value\">$text</span>";
