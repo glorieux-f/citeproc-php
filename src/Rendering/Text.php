@@ -145,7 +145,8 @@ class Text implements Rendering
             foreach ($attrMatches as $m) {
                 $attrName = strtolower($m[1]);
                 if (!array_key_exists($attrName, $allowedAttrs)) continue;
-                $attrValue = trim($m[3]);
+                // attribute value may be in uppercase because of text-case
+                $attrValue = mb_strtolower(trim($m[3]), "UTF-8");
                 // For style attribute: normalize spacing, trailing semicolon
                 if ($attrName === 'style') {
                     $attrValue = preg_replace('/\s+|;$/', '', $attrValue) . ';';
@@ -370,9 +371,10 @@ class Text implements Rendering
         // check if there is an attribute with prefix short or long e.g. shortTitle or longAbstract
         // test case group_ShortOutputOnly.json
         $value = "";
-        if (in_array($this->form, ["short", "long"])) {
-            $attrWithPrefix = $this->form . ucfirst($this->toRenderTypeValue);
-            $attrWithSuffix = $this->toRenderTypeValue . "-" . $this->form;
+        $form = $this->form;
+        if ($form == "short" || $form == "long") {
+            $attrWithPrefix = $form . ucfirst($this->toRenderTypeValue);
+            $attrWithSuffix = $this->toRenderTypeValue . "-" . $form;
             if (isset($data->{$attrWithPrefix}) && !empty($data->{$attrWithPrefix})) {
                 $value = $data->{$attrWithPrefix};
             } else {
@@ -389,11 +391,9 @@ class Text implements Rendering
                 $value = $data->{$this->toRenderTypeValue};
             }
         }
+        if (empty($value) || trim($value) == "") return $value;
         // apply text case before function for escaping tags
         $value = $this->applyTextCase($value, $lang);
-        if ($this->textCase) {
-            echo $this->textCase . " " . $value;
-        }
         if (CiteProc::getContext()->isModeBibliography()) {
             return $this->renderFunction['bibliography']($data, $value);
         }
