@@ -127,8 +127,7 @@ class Label implements Rendering
                 }
             }
         }
-
-        return $this->formatting($text, $lang);
+        return $this->formatting($text, $lang, $data);
     }
 
     /**
@@ -227,7 +226,7 @@ class Label implements Rendering
      * @param $lang
      * @return string
      */
-    protected function formatting($text, $lang)
+    protected function formatting($text, $lang, $data)
     {
         if (empty($text)) {
             return "";
@@ -237,7 +236,7 @@ class Label implements Rendering
         }
 
         $text = preg_replace("/\s&\s/", " &#38; ", $text); //replace ampersands by html entity
-        $text = $this->format($this->applyTextCase($text, $lang));
+        $text = $this->format($this->applyTextCase($text, $lang), $data);
         return $this->addAffixes($text);
     }
 

@@ -147,7 +147,7 @@ class Group implements Rendering, HasParent
                 }
             }
         }
-        return $this->formatting($textParts, $variables, $haveVariables, $terms);
+        return $this->formatting($textParts, $variables, $haveVariables, $terms, $data);
     }
 
     /**
@@ -165,7 +165,7 @@ class Group implements Rendering, HasParent
      * @param  $terms
      * @return string
      */
-    protected function formatting($textParts, $variables, $haveVariables, $terms)
+    protected function formatting($textParts, $variables, $haveVariables, $terms, $data)
     {
         if (empty($textParts)) {
             return "";
@@ -182,7 +182,7 @@ class Group implements Rendering, HasParent
         $text = StringHelper::implodeAndPreventConsecutiveChars($this->delimiter, $textParts);
 
         if (!empty($text)) {
-            return $this->wrapDisplayBlock($this->addAffixes($this->format(($text))));
+            return $this->wrapDisplayBlock($this->addAffixes($this->format($text, $data)));
         }
 
         return "";

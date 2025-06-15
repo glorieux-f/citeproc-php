@@ -126,11 +126,11 @@ class Date
         } catch (CiteProcException $e) {
             if (isset($data->{$this->variable}->{'raw'}) &&
                 !preg_match("/(\p{L}+)\s?([\-\–&,])\s?(\p{L}+)/u", $data->{$this->variable}->{'raw'})) {
-                return $this->addAffixes($this->format($this->applyTextCase($data->{$this->variable}->{'raw'})));
+                return $this->addAffixes($this->format($this->applyTextCase($data->{$this->variable}->{'raw'}), $data));
             } else {
                 if (isset($data->{$this->variable}->{'literal'})) {
                     return $this->addAffixes(
-                        $this->format($this->applyTextCase($data->{$this->variable}->{'literal'}))
+                        $this->format($this->applyTextCase($data->{$this->variable}->{'literal'}, $data))
                     );
                 }
             }
@@ -213,7 +213,7 @@ class Date
             return "";
         }
         else {
-            return $this->addAffixes($this->format($this->applyTextCase($ret)));
+            return $this->addAffixes($this->format($this->applyTextCase($ret), $data));
         }
     }
 

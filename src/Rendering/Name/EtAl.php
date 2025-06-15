@@ -55,6 +55,6 @@ class EtAl implements Rendering
      */
     public function render($data, $citationNumber = null)
     {
-        return $this->format(CiteProc::getContext()->getLocale()->filter('terms', $this->term)->single);
+        return $this->format(CiteProc::getContext()->getLocale()->filter('terms', $this->term)->single, $data);
     }
 }

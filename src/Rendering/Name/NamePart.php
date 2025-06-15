@@ -87,13 +87,13 @@ class NamePart
             “dropping-particle” name-parts. affixes surround the “given” name-part, enclosing any demoted name particles
             for inverted names.*/
             case 'given':
-                return $this->addAffixes($this->format($this->applyTextCase($data->given)));
+                return $this->addAffixes($this->format($this->applyTextCase($data->given)), $data);
 
             /* if name set to “family”, formatting and text-case attributes affect the “family” and
             “non-dropping-particle” name-parts. affixes surround the “family” name-part, enclosing any preceding name
             particles, as well as the “suffix” name-part for non-inverted names.*/
             case 'family':
-                return $this->addAffixes($this->format($this->applyTextCase($data->family)));
+                return $this->addAffixes($this->format($this->applyTextCase($data->family)), $data);
         }
         throw new CiteProcException("This shouldn't happen.");
     }

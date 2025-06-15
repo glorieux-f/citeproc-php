@@ -142,7 +142,7 @@ class Number implements Rendering
                 }
                 break;
         }
-        return $this->wrapDisplayBlock($this->addAffixes($this->format($this->applyTextCase($text, $lang))));
+        return $this->wrapDisplayBlock($this->addAffixes($this->format($this->applyTextCase($text, $lang), $data)));
     }
 
     /**

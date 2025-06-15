@@ -21,12 +21,13 @@ class CiteProcHelper
      * @param string $markupFunction name to search in $markupExtension extension
      * @return callable a function 
      */
-    public static function getAdditionMarkupFunction($markupFunction)
+    public static function getAdditionMarkupFunction($markupFunction, $mode = null)
     {
+        if ($mode == null) $mode = CiteProc::getContext()->getMode();
         $node = null; // pointer on the desired function 
         $markupExtension = CiteProc::getContext()->getMarkupExtension();
         // mode specific function override genric
-        if (array_key_exists($mode = CiteProc::getContext()->getMode(), $markupExtension)) {
+        if (array_key_exists($mode, $markupExtension)) {
             if (array_key_exists($markupFunction, $markupExtension[$mode])) {
                 $node = $markupExtension[$mode][$markupFunction];
             }
