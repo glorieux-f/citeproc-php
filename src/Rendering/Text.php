@@ -250,7 +250,7 @@ class Text implements Rendering
             strtok(CiteProc::getContext()->getLocale()->getLanguage(), '-');
 
         $renderedText = "";
-        static $type = $this->toRenderTypeValue;
+        $type = $this->toRenderTypeValue;
         switch ($this->toRenderType) {
             case 'value':
                 $renderedText = $this->applyTextCase($type, $lang);
