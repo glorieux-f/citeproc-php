@@ -250,27 +250,27 @@ class Text implements Rendering
             strtok(CiteProc::getContext()->getLocale()->getLanguage(), '-');
 
         $renderedText = "";
+        static $type = $this->toRenderTypeValue;
         switch ($this->toRenderType) {
             case 'value':
-                $renderedText = $this->applyTextCase($this->toRenderTypeValue, $lang);
+                $renderedText = $this->applyTextCase($type, $lang);
                 break;
             case 'variable':
-                if ($this->toRenderTypeValue === "locator" && CiteProc::getContext()->isModeCitation()) {
+                if ($type === "locator" && CiteProc::getContext()->isModeCitation()) {
                     $renderedText = $this->renderLocator($data, $citationNumber);
                 // for test sort_BibliographyCitationNumberDescending.json
-                } elseif ($this->toRenderTypeValue === "citation-number") {
+                } elseif ($type === "citation-number") {
                     $renderedText = $this->renderCitationNumber($data, $citationNumber);
                     break;
-                } elseif (in_array($this->toRenderTypeValue, ["page", "chapter-number", "folio"])) {
-                    $renderedText = !empty($data->{$this->toRenderTypeValue}) ?
-                        $this->renderPage($data->{$this->toRenderTypeValue}) : '';
+                } elseif ($type == "page" || $type == "chapter-number" || $type == "folio") {
+                    $renderedText = !empty($data->{$type}) ? $this->renderPage($data->{$type}) : '';
                 } else {
                     $renderedText = $this->renderVariable($data, $lang);
                 }
                 if (CiteProc::getContext()->getRenderingState()->getValue() === RenderingState::SUBSTITUTION) {
-                    unset($data->{$this->toRenderTypeValue});
+                    unset($data->{$type});
                 }
-                if (!CiteProcHelper::isUsingAffixesByMarkupExtentsion($data, $this->toRenderTypeValue)) {
+                if (!CiteProcHelper::isUsingAffixesByMarkupExtentsion($data, $type)) {
                     $renderedText = $this->applyAdditionalMarkupFunction($data, $renderedText);
                 }
                 break;
@@ -280,7 +280,7 @@ class Text implements Rendering
             case 'term':
                 $term = CiteProc::getContext()
                     ->getLocale()
-                    ->filter("terms", $this->toRenderTypeValue, $this->form)
+                    ->filter("terms", $type, $this->form)
                     ->single;
                 $renderedText = !empty($term) ? $this->applyTextCase($term, $lang) : "";
         }
