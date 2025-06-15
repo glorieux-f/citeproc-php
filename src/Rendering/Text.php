@@ -391,6 +391,10 @@ class Text implements Rendering
                 $value = $data->{$this->toRenderTypeValue};
             }
         }
+        if (is_array($value)) {
+            // How inform user here that he’s provinding unexpected data? #184
+            $value = implode(" ", $value);
+        }
         if (empty($value) || trim($value) == "") return $value;
         // apply text case before function for escaping tags
         $value = $this->applyTextCase($value, $lang);
