@@ -196,14 +196,14 @@ class Names implements Rendering, HasParent
                 } else {
                     $arr = [];
                     foreach ($data->editor as $editor) {
-                        $edt = $this->format($editor->family.", ".$editor->given);
+                        $edt = $this->format($editor->family.", ".$editor->given, $data);
                         $results[] = NameHelper::addExtendedMarkup('editor', $editor, $edt);
                     }
                     $str .= implode($this->delimiter, $arr);
                 }
                 if (isset($this->label)) {
-                    $this->label->setVariable("editortranslator");
-                    $str .= $this->label->render($data);
+                    
+                    $str = $this->appendLabel($data, "editortranslator", $str);
                 }
                 $vars = $this->variables->toArray();
                 $vars = array_filter($vars, function ($value) {
@@ -226,11 +226,11 @@ class Names implements Rendering, HasParent
                     if (is_numeric($name) && $this->name->getForm() === "count") {
                         $results = $this->addCountValues($res, $results);
                     } else {
-                        $results[] = $this->format($name);
+                        $results[] = $this->format($name, $data);
                     }
                 } else {
                     foreach ($data->{$var} as $name) {
-                        $formatted = $this->format($name->given." ".$name->family);
+                        $formatted = $this->format($name->given." ".$name->family, $data);
                         $results[] = NameHelper::addExtendedMarkup($var, $name, $formatted);
                     }
                 }
@@ -259,22 +259,21 @@ class Names implements Rendering, HasParent
     private function appendLabel($data, $var, $name): string
     {
         $this->label->setVariable($var);
-        $renderedLabel = trim($this->label->render($data));
+        // [glorieux] prefix and suffix around label could have spaces instead of punctuation,
+        // trim() is not good here. label->render() will apply affixes (prefix and suffix),
+        // ignoring position relatively to names. Why an author of a style would have put an
+        // undesired prefix if the label is before names?  
+        $renderedLabel = $this->label->render($data)    ;
         if (empty($renderedLabel)) {
             return $name;
         }
+        $name = trim($name);
         if ($this->renderLabelBeforeName) {
-            $delimiter = !in_array(
-                trim($this->label->renderSuffix()),
-                Punctuation::getAllPunctuations()
-            ) ? " " : "";
-            $result = $renderedLabel . $delimiter . trim($name);
+            // $delimiter = Punctuation::isPunctuation($this->label->renderSuffix()) ? " " : "";
+            $result = $renderedLabel . trim($name);
         } else {
-            $delimiter = !in_array(
-                trim($this->label->renderPrefix()),
-                Punctuation::getAllPunctuations()
-            ) ? " " : "";
-            $result = trim($name) . $delimiter . $renderedLabel;
+            // $delimiter = Punctuation::isPunctuation($this->label->renderPrefix()) ? " " : "";
+            $result = trim($name) . $renderedLabel;
         }
         return $result;
     }
