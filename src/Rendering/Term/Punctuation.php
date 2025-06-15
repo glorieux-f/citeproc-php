@@ -2,11 +2,10 @@
 
 namespace Seboettg\CiteProc\Rendering\Term;
 
-use MyCLabs\Enum\Enum;
+use ReflectionClass;
 use Seboettg\CiteProc\CiteProc;
-use Seboettg\Collection\ArrayList;
 
-class Punctuation extends Enum
+class Punctuation
 {
     public const OPEN_QUOTE = "open-quote";
     public const CLOSE_QUOTE = "close-quote";
@@ -16,17 +15,41 @@ class Punctuation extends Enum
     public const COLON = "colon";
     public const COMMA = "comma";
     public const SEMICOLON = "semicolon";
+    /** Default punctuation array to clone  */
+    private static array $_PUN = [
+        self::OPEN_QUOTE => "“",
+        self::CLOSE_QUOTE => "”",
+        self::OPEN_INNER_QUOTE => "‘",
+        self::CLOSE_INNER_QUOTE => "’",
+        self::PAGE_RANGE_DELIMITER => "-",
+        self::COLON => ":",
+        self::COMMA => ",",
+        self::SEMICOLON => ";",
+    ];
+    /** last language requested */
+    private static $language;
+    /** Punctuation cached by language, with default values*/
+    private static $punMap;
 
-    public static function getAllPunctuations(): array
+
+    private static function cachePun() {
+        if (!isset($punMap)) $punMap = self::$_PUN;
+        static $locale = CiteProc::getContext()->getLocale();
+        $language = $locale->getLanguage();
+        if ($language === self::$language) return;
+        self::$language = $language;
+        self::$punMap = self::$_PUN;
+        $oClass = new ReflectionClass(__CLASS__);
+        foreach($oClass->getConstants() as $const => $localeKey) {
+            if ($const[0] == '_') continue;
+            $pun = $locale->filter("terms", $localeKey)->single;
+            if ($pun !== null) self::$punMap[$localeKey] = $pun;
+        }
+    }
+ 
+    public static function isPunctuation(String $chars): bool
     {
-        $values = new ArrayList();
-        return $values
-            ->setArray(Punctuation::toArray())
-            ->map(function (string $punctuation) {
-                return CiteProc::getContext()->getLocale()->filter("terms", $punctuation)->single;
-            })
-            ->collect(function ($items) {
-                return array_values($items);
-            });
+        self::cachePun();
+        return isset(self::$punMap[trim($chars)]); 
     }
 }
