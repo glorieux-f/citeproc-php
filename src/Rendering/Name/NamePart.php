@@ -9,11 +9,12 @@
 
 namespace Seboettg\CiteProc\Rendering\Name;
 
+use SimpleXMLElement;
+use stdClass;
 use Seboettg\CiteProc\Exception\CiteProcException;
 use Seboettg\CiteProc\Styles\AffixesTrait;
 use Seboettg\CiteProc\Styles\FormattingTrait;
 use Seboettg\CiteProc\Styles\TextCaseTrait;
-use SimpleXMLElement;
 
 /**
  * Class NamePart

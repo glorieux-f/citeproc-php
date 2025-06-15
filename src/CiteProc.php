@@ -9,6 +9,8 @@
 
 namespace Seboettg\CiteProc;
 
+use SimpleXMLElement;
+use stdClass;
 use InvalidArgumentException;
 use Seboettg\CiteProc\Data\DataList;
 use Seboettg\CiteProc\Exception\CiteProcException;
@@ -21,7 +23,6 @@ use Seboettg\CiteProc\Root\Root;
 use Seboettg\CiteProc\Styles\Css\CssStyle;
 use Seboettg\CiteProc\Util\CiteProcHelper;
 use Seboettg\Collection\ArrayList;
-use SimpleXMLElement;
 
 /**
  * Class CiteProc

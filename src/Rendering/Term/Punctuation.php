@@ -2,6 +2,7 @@
 
 namespace Seboettg\CiteProc\Rendering\Term;
 
+use stdClass;
 use ReflectionClass;
 use Seboettg\CiteProc\CiteProc;
 

@@ -9,14 +9,14 @@
 
 namespace Seboettg\CiteProc\Rendering;
 
+use SimpleXMLElement;
+use stdClass;
 use Seboettg\CiteProc\CiteProc;
 use Seboettg\CiteProc\Styles\AffixesTrait;
 use Seboettg\CiteProc\Styles\DisplayTrait;
 use Seboettg\CiteProc\Styles\FormattingTrait;
 use Seboettg\CiteProc\Styles\TextCaseTrait;
 use Seboettg\CiteProc\Util;
-use SimpleXMLElement;
-use stdClass;
 
 /**
  * Class Number
@@ -84,7 +84,7 @@ class Number implements Rendering
      * @param int|null $citationNumber
      * @return string
      */
-    public function render($data, $citationNumber = null): string
+    public function render($data, $citationNumber): string
     {
         $lang = (isset($data->language) && $data->language != 'en') ? $data->language : 'en';
 

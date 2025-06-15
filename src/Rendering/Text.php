@@ -9,6 +9,8 @@
 
 namespace Seboettg\CiteProc\Rendering;
 
+use SimpleXMLElement;
+use stdClass;
 use Seboettg\CiteProc\CiteProc;
 use Seboettg\CiteProc\Exception\CiteProcException;
 use Seboettg\CiteProc\RenderingState;
@@ -23,8 +25,6 @@ use Seboettg\CiteProc\Util\CiteProcHelper;
 use Seboettg\CiteProc\Util\NumberHelper;
 use Seboettg\CiteProc\Util\PageHelper;
 use Seboettg\CiteProc\Util\StringHelper;
-use SimpleXMLElement;
-use stdClass;
 use function Seboettg\CiteProc\ucfirst;
 
 /**
@@ -59,11 +59,11 @@ class Text implements Rendering
      * 
      * Implemented as a custom Lambda Function.
      * 
-     * @param string $data ? optional, possible $data context, not fully relevant
+     * @param stdClass $data ? optional, possible $data context, not fully relevant
      * @param string $text ! required, text to output
      * @return string Safe HTML string with allowed tags and attributes
      */
-    public static function renderTextRich($data=null, $text)
+    public static function renderTextRich($data, $text)
     {
         static $ENT_FLAGS = ENT_SUBSTITUTE;
         static $allowedTags = [
@@ -178,11 +178,11 @@ class Text implements Rendering
     /**
      * Default text rendering, escaped.
      * 
-     * @param string $data ? optional, possible $data context, not fully relevant
+     * @param stdClass $data ? optional, possible $data context, not fully relevant
      * @param string $text ! required, text to output
      * @return string Safe HTML string with allowed tags and attributes
      */
-    public static function renderTextEscaped($data=null, $text)
+    public static function renderTextEscaped($data, $text)
     {
         return StringHelper::clearApostrophes (
             htmlspecialchars($text, ENT_HTML5)

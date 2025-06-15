@@ -9,8 +9,8 @@
 
 namespace Seboettg\CiteProc\Rendering;
 
-use Seboettg\CiteProc\Data\DataList;
 use stdClass;
+use Seboettg\CiteProc\Data\DataList;
 
 /**
  * Interface RenderingInterface
@@ -24,8 +24,8 @@ interface Rendering
 
     /**
      * @param array|DataList|stdClass $data
-     * @param int|null $citationNumber
+     * @param null|int $citationNumber
      * @return string
      */
-    public function render($data, $citationNumber = []);
+    public function render($data, $citationNumber);
 }

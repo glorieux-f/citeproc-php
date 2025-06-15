@@ -9,14 +9,14 @@
 
 namespace Seboettg\CiteProc\Rendering\Name;
 
+use SimpleXMLElement;
+use stdClass;
 use Seboettg\CiteProc\CiteProc;
 use Seboettg\CiteProc\Exception\InvalidStylesheetException;
 use Seboettg\CiteProc\Rendering\Rendering;
 use Seboettg\CiteProc\RenderingState;
 use Seboettg\CiteProc\Util\Factory;
 use Seboettg\Collection\ArrayList;
-use SimpleXMLElement;
-use stdClass;
 
 /**
  * Class Substitute

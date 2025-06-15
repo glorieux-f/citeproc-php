@@ -10,8 +10,8 @@ declare(strict_types=1);
 
 namespace Seboettg\CiteProc\Constraint;
 
-use Seboettg\CiteProc\CiteProc;
 use stdClass;
+use Seboettg\CiteProc\CiteProc;
 
 /**
  * Class Locator

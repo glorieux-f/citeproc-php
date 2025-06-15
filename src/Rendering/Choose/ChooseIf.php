@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace Seboettg\CiteProc\Rendering\Choose;
 
+use SimpleXMLElement;
+use stdClass;
 use Seboettg\CiteProc\Constraint\Constraint;
 use Seboettg\CiteProc\Constraint\Factory;
 use Seboettg\CiteProc\Data\DataList;
@@ -19,7 +21,6 @@ use Seboettg\CiteProc\Rendering\Group;
 use Seboettg\CiteProc\Rendering\HasParent;
 use Seboettg\CiteProc\Rendering\Rendering;
 use Seboettg\Collection\ArrayList;
-use SimpleXMLElement;
 
 class ChooseIf implements Rendering, HasParent
 {
@@ -86,11 +87,11 @@ class ChooseIf implements Rendering, HasParent
         return implode($glue, array_filter($ret));
     }
     /**
-     * @param $data
+     * @param stdClass $data
      * @param null|int $citationNumber
      * @return bool
      */
-    public function match($data, int $citationNumber = null): bool
+    public function match(stdClass $data, ?int $citationNumber = null): bool
     {
         if ($this->constraints->count() === 1) {
             return $this->constraints->current()->validate($data);

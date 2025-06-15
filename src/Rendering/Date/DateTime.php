@@ -11,6 +11,8 @@ namespace Seboettg\CiteProc\Rendering\Date;
 
 use DateTimeZone;
 use Exception;
+use SimpleXMLElement;
+use stdClass;
 use Seboettg\CiteProc\Exception\InvalidDateTimeException;
 
 class DateTime extends \DateTime

@@ -9,12 +9,12 @@
 
 namespace Seboettg\CiteProc\Rendering\Name;
 
+use SimpleXMLElement;
+use stdClass;
 use Seboettg\CiteProc\CiteProc;
 use Seboettg\CiteProc\Data\DataList;
 use Seboettg\CiteProc\Rendering\Rendering;
 use Seboettg\CiteProc\Styles\FormattingTrait;
-use SimpleXMLElement;
-use stdClass;
 
 /**
  * Class EtAl

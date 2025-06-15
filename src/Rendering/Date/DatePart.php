@@ -9,6 +9,8 @@
 
 namespace Seboettg\CiteProc\Rendering\Date;
 
+use SimpleXMLElement;
+use stdClass;
 use Seboettg\CiteProc\CiteProc;
 use Seboettg\CiteProc\Rendering\Layout;
 use Seboettg\CiteProc\Rendering\Number;
@@ -16,7 +18,6 @@ use Seboettg\CiteProc\Styles\AffixesTrait;
 use Seboettg\CiteProc\Styles\FormattingTrait;
 use Seboettg\CiteProc\Styles\RangeDelimiterTrait;
 use Seboettg\CiteProc\Styles\TextCaseTrait;
-use SimpleXMLElement;
 
 /**
  * Class DatePart
@@ -95,7 +96,7 @@ class DatePart
      * @param Date|null $parent
      * @return string
      */
-    public function renderWithoutAffixes(DateTime $date, Date $parent = null)
+    public function renderWithoutAffixes(DateTime $date, ?Date $parent = null)
     {
         if (!is_null($parent)) {
             $this->parent = $parent;

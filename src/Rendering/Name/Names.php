@@ -9,6 +9,8 @@
 
 namespace Seboettg\CiteProc\Rendering\Name;
 
+use SimpleXMLElement;
+use stdClass;
 use Seboettg\CiteProc\CiteProc;
 use Seboettg\CiteProc\Exception\CiteProcException;
 use Seboettg\CiteProc\Exception\InvalidStylesheetException;
@@ -24,8 +26,6 @@ use Seboettg\CiteProc\Styles\FormattingTrait;
 use Seboettg\CiteProc\Util\Factory;
 use Seboettg\CiteProc\Util\NameHelper;
 use Seboettg\Collection\ArrayList;
-use SimpleXMLElement;
-use stdClass;
 
 /**
  * Class Names

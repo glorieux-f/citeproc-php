@@ -10,9 +10,9 @@ declare(strict_types=1);
 
 namespace Seboettg\CiteProc\Constraint;
 
+use stdClass;
 use Seboettg\CiteProc\CiteProc;
 use Seboettg\Collection\ArrayList;
-use stdClass;
 
 /**
  * Class Position

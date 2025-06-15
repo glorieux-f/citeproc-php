@@ -9,12 +9,12 @@
 
 namespace Seboettg\CiteProc\Util;
 
+use SimpleXMLElement;
+use stdClass;
 use InvalidArgumentException;
 use Seboettg\CiteProc\Exception\CiteProcException;
 use Seboettg\CiteProc\Exception\InvalidStylesheetException;
 use Seboettg\CiteProc\Rendering\Name\Names;
-use SimpleXMLElement;
-use stdClass;
 
 /**
  * Class Variables

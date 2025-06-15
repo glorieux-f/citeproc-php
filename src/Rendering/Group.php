@@ -9,6 +9,8 @@
 
 namespace Seboettg\CiteProc\Rendering;
 
+use SimpleXMLElement;
+use stdClass;
 use Seboettg\CiteProc\Exception\InvalidStylesheetException;
 use Seboettg\CiteProc\Styles\AffixesTrait;
 use Seboettg\CiteProc\Styles\ConsecutivePunctuationCharacterTrait;
@@ -18,7 +20,6 @@ use Seboettg\CiteProc\Styles\FormattingTrait;
 use Seboettg\CiteProc\Util\Factory;
 use Seboettg\CiteProc\Util\StringHelper;
 use Seboettg\Collection\ArrayList;
-use SimpleXMLElement;
 
 /**
  * Class Group

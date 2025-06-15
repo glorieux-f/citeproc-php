@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Seboettg\CiteProc\Constraint;
 
+use stdClass;
 use Seboettg\CiteProc\Exception\ClassNotFoundException;
 use function Seboettg\CiteProc\ucfirst;
 

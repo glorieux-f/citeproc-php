@@ -9,12 +9,12 @@
 
 namespace Seboettg\CiteProc\Rendering;
 
+use SimpleXMLElement;
+use stdClass;
 use Seboettg\CiteProc\CiteProc;
 use Seboettg\CiteProc\Styles\AffixesTrait;
 use Seboettg\CiteProc\Styles\FormattingTrait;
 use Seboettg\CiteProc\Styles\TextCaseTrait;
-use SimpleXMLElement;
-use stdClass;
 
 /**
  * Class Label

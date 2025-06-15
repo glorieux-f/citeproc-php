@@ -9,6 +9,8 @@
 
 namespace Seboettg\CiteProc\Rendering;
 
+use SimpleXMLElement;
+use stdClass;
 use Seboettg\CiteProc\CiteProc;
 use Seboettg\CiteProc\Data\DataList;
 use Seboettg\CiteProc\Exception\InvalidStylesheetException;
@@ -22,8 +24,6 @@ use Seboettg\CiteProc\Util\CiteProcHelper;
 use Seboettg\CiteProc\Util\Factory;
 use Seboettg\CiteProc\Util\StringHelper;
 use Seboettg\Collection\ArrayList;
-use SimpleXMLElement;
-use stdClass;
 
 /**
  * Class Layout
