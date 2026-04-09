@@ -573,7 +573,8 @@ class Name implements HasParent
             } elseif ($this->form === "short") {
                 // [La] [Fontaine]
                 NameHelper::prependParticleTo($data, "family", "non-dropping-particle");
-                $text = $data->family;
+                list($family) = $this->renderNameParts($data);
+                $text = $family;
             } else {// form "long" (default)
                 // [Jean] [de] [La] [Fontaine] [III]
                 NameHelper::prependParticleTo($data, "family", "non-dropping-particle");
