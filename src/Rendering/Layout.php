@@ -93,8 +93,9 @@ class Layout implements Rendering
         if (CiteProc::getContext()->isModeBibliography()) {
             foreach ($data as $citationNumber => $item) {
                 ++self::$numberOfCitedItems;
+                // add lf separator here
                 CiteProc::getContext()->getResults()->append(
-                    $this->wrapBibEntry($item, $this->renderSingle($item, $citationNumber))
+                    $this->wrapBibEntry($item, $this->renderSingle($item, $citationNumber)) . "\n"
                 );
             }
             $ret .= implode($this->delimiter, CiteProc::getContext()->getResults()->toArray());
