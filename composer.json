@@ -38,7 +38,6 @@
         "ext-intl": "*"
     },
     "require-dev": {
-        "php-coveralls/php-coveralls": "^1",
         "phpunit/phpunit": "^8.5",
         "squizlabs/php_codesniffer": "^3.5",
         "phpmd/phpmd": "^2.8"

@@ -27,7 +27,7 @@ class CiteProcHelper
         $node = null; // pointer on the desired function 
         $markupExtension = CiteProc::getContext()->getMarkupExtension();
         // mode specific function override genric
-        if (array_key_exists($mode, $markupExtension)) {
+        if ($mode != null && array_key_exists($mode, $markupExtension)) {
             if (array_key_exists($markupFunction, $markupExtension[$mode])) {
                 $node = $markupExtension[$mode][$markupFunction];
             }
